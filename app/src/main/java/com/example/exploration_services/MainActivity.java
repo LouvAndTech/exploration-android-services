@@ -56,6 +56,11 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
+        /**
+         * This part create a new service Intent at the start of the app and bind it to this activity.
+         * If the service is already running, it will bind to the existing service.
+         * Binding the service allows the activity to communicate with the service.
+         */
         Intent serviceIntent = new Intent(this, DataService.class);
         if (!isBound) {
             startService(serviceIntent);
@@ -66,39 +71,57 @@ public class MainActivity extends AppCompatActivity {
 
     public void onButtonPushClick(View view) {
         Log.i(TAG, "onButtonPushClick");
-        // Push data to the service
+        
+        /**
+         * This part retrieves the text from the EditText and pushes it to the service.
+         */
         dataService.setData(binding.editTextTextDataToPush.getText().toString()); // Push data to the service
+        
         binding.editTextTextDataToPush.setText(""); // Clear the EditText
     }
     public void onButtonPullClick(View view) {
         Log.i(TAG, "onButtonPullClick");
-        // Pull data from the service
+
+        /**
+         * This part pulls the data from the service and displays it in the TextView.
+         * If the service is bound, it retrieves the data directly from the service.
+         * If not bound, it checks if the service is null or if there is no data to pull.
+         * If the service is not bound, it starts the service and binds to it.
+         */
         if (isBound) {
             Log.i(TAG, "Data from service: " + dataService.getData());
             binding.textViewDataPulled.setText(dataService.getData());
         } else {
            if (dataService != null) {
                String data = dataService.getData();
-               if (data == "null") {
+               if ("null".equals(data) || data == null || data.trim().isEmpty()) { 
+                    // For some reason, obscure to me I can never enter in this condition even after testing every type of null return.
+                    // This does not break the process but it's far from ideal.
                    Log.e(TAG, "No data to pull");
                    binding.textViewDataPulled.setText("No data to pull");
                } else {
                    Log.i(TAG, "Data from service: " + data);
                    binding.textViewDataPulled.setText(data);
                }
-           } else {
+           }else {
                Log.e(TAG, "Service is not bound");
                binding.textViewDataPulled.setText("Service is not bound");
-           }Intent serviceIntent = new Intent(this, DataService.class);
+           }
+
+           Intent serviceIntent = new Intent(this, DataService.class);
            startService(serviceIntent);
            bindService(serviceIntent, serviceConnection, BIND_AUTO_CREATE);
-
         }
     }
 
     public void onButtonKillClick(View view) {
         // stop and destroy the service
         Log.i(TAG, "onButtonKillClick");
+        
+        /**
+         * This part stops the service and unbinds it from the activity.
+         * It ensures that the service is no longer running and cleans up resources.
+         */
         Intent serviceIntent = new Intent(this, DataService.class);
         stopService(serviceIntent);
     }
