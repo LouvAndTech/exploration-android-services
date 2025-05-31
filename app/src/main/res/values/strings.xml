@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">exploration-services</string>
+    <string name="MainActivity_label">Send Data to service :</string>
+    <string name="MainActivity_button_send">Send Data</string>
+    <string name="MainActivity_button_pull">Pull Data</string>
+    <string name="MainActivity_label_pulled">Data pulled : </string>
+    <string name="MainActivity_label_kill_service">Kill the service</string>
 </resources>
